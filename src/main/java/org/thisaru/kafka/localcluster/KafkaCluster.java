@@ -1,13 +1,20 @@
 /*
- * Author: Thisaru Guruge
- * Website: https://ThisaruGuruge.github.io
+ *    Copyright 2020 Thisaru Guruge
  *
- * This software is under Apache 2.0 License.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
  *
- * Copyright (c) 2020 | All Rights Reserved
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 
-package org.thisaru.kafka;
+package org.thisaru.kafka.localcluster;
 
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -20,8 +27,8 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.thisaru.kafka.servers.LocalKafkaServer;
-import org.thisaru.kafka.servers.LocalZooKeeperServer;
+import org.thisaru.kafka.localcluster.servers.LocalKafkaServer;
+import org.thisaru.kafka.localcluster.servers.LocalZooKeeperServer;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,10 +42,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
-import static org.thisaru.kafka.utils.Constants.KAFKA_PROP;
-import static org.thisaru.kafka.utils.Constants.KAFKA_SUFFIX;
-import static org.thisaru.kafka.utils.Constants.ZOOKEEPER_PROP;
-import static org.thisaru.kafka.utils.Constants.ZOOKEEPER_SUFFIX;
+import static org.thisaru.kafka.localcluster.utils.Constants.KAFKA_PROP;
+import static org.thisaru.kafka.localcluster.utils.Constants.KAFKA_SUFFIX;
+import static org.thisaru.kafka.localcluster.utils.Constants.ZOOKEEPER_PROP;
+import static org.thisaru.kafka.localcluster.utils.Constants.ZOOKEEPER_SUFFIX;
 
 /**
  * Builds a Kafka cluster with

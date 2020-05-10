@@ -4,7 +4,7 @@
 
     <groupId>org.thisaru.kafka</groupId>
     <artifactId>local-kafka-cluster-for-testing</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <licenses>
