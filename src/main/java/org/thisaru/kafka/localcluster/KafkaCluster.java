@@ -104,6 +104,9 @@ public class KafkaCluster {
      * @return - {@code KafkaCluster} with the ZooKeeper
      */
     public KafkaCluster withZooKeeper(int port, Properties customProperties) {
+        if (this.zookeeper != null) {
+            throw new IllegalStateException("ZooKeeper is already running");
+        }
         Properties properties = new Properties();
         this.zookeeperPort = port;
         properties.putAll(defaultZooKeeperProperties);
