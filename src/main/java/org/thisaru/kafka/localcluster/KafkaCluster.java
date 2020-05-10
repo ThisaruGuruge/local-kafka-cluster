@@ -49,9 +49,10 @@ import static org.thisaru.kafka.localcluster.utils.Constants.ZOOKEEPER_SUFFIX;
 
 /**
  * Builds a Kafka cluster with
- * <p>
- * - A ZooKeeper (Required) - KafkaServer(s) (At least one required) - KafkaConsumer (Optional) - KafkaProducer
- * (Optional)
+ * - A ZooKeeper (Required)
+ * - KafkaServer(s) (At least one required)
+ * - KafkaConsumer (Optional)
+ * - KafkaProducer (Optional)
  */
 public class KafkaCluster {
 
@@ -59,6 +60,7 @@ public class KafkaCluster {
     private static final String zookeeperConnectConfig = "zookeeper.connect";
     private static final String logDirConfig = "log.dirs";
     private static final String listenersConfig = "listeners";
+    private static final String brokerIdConfig = "broker.id";
 
     // ZooKeeper configs
     private static final String dataDirConfig = "dataDir";
@@ -143,6 +145,8 @@ public class KafkaCluster {
         String zookeeperConfig = this.host + ":" + this.zookeeperPort;
         properties.setProperty(zookeeperConnectConfig, zookeeperConfig);
         properties.setProperty(logDirConfig, kafkaDataDir);
+        // Assign next broker index as the broker ID
+        properties.setProperty(brokerIdConfig, Integer.toString(brokerList.size()));
         LocalKafkaServer kafkaServer = new LocalKafkaServer(properties);
         this.brokerList.add(kafkaServer);
         this.brokerPort = port;
