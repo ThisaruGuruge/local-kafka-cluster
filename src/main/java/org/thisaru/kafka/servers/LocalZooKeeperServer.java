@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Properties;
 
 /**
- * Creates a local Zookeeper server for testing purposes. Specially in unit tests / integration tests requiring Kafka.
+ * Creates a local ZooKeeper server for testing purposes. Specially in unit tests / integration tests requiring Kafka.
  */
 public class LocalZooKeeperServer {
     Logger logger = LoggerFactory.getLogger(LocalZooKeeperServer.class);
@@ -45,9 +45,9 @@ public class LocalZooKeeperServer {
         new Thread(() -> {
             try {
                 zooKeeperServer.runFromConfig(configuration);
-                logger.info("Zookeeper started");
+                logger.info("ZooKeeper started");
             } catch (Exception e) {
-                logger.error("Zookeeper startup failed.", e);
+                logger.error("ZooKeeper startup failed.", e);
             }
         }).start();
     }

@@ -53,7 +53,7 @@ public class KafkaCluster {
     private static final String logDirConfig = "log.dirs";
     private static final String listenersConfig = "listeners";
 
-    // Zookeeper configs
+    // ZooKeeper configs
     private static final String dataDirConfig = "dataDir";
     private static final String portConfig = "clientPort";
 
@@ -64,7 +64,7 @@ public class KafkaCluster {
     private LocalZooKeeperServer zookeeper;
     private List<LocalKafkaServer> brokerList;
 
-    private Properties defaultZookeeperProperties;
+    private Properties defaultZooKeeperProperties;
     private Properties defaultKafkaProperties;
     private int zookeeperPort = 2181;
     private int brokerPort = 9092;
@@ -94,10 +94,10 @@ public class KafkaCluster {
      * @param customProperties - Properties of the ZooKeeper, in addition to the default values
      * @return - {@code KafkaCluster} with the ZooKeeper
      */
-    public KafkaCluster withZookeeper(int port, Properties customProperties) {
+    public KafkaCluster withZooKeeper(int port, Properties customProperties) {
         Properties properties = new Properties();
         this.zookeeperPort = port;
-        properties.putAll(defaultZookeeperProperties);
+        properties.putAll(defaultZooKeeperProperties);
         if (customProperties != null) {
             properties.putAll(customProperties);
         }
@@ -119,7 +119,7 @@ public class KafkaCluster {
      */
     public KafkaCluster withBroker(String protocol, int port, Properties customProperties) {
         if (this.zookeeper == null) {
-            throw new IllegalStateException("Zookeeper is not initialized");
+            throw new IllegalStateException("ZooKeeper is not initialized");
         }
         Properties properties = new Properties();
         properties.putAll(defaultKafkaProperties);
@@ -196,7 +196,7 @@ public class KafkaCluster {
      */
     public KafkaCluster start() {
         if (this.zookeeper == null) {
-            throw new IllegalStateException("Zookeeper is not started");
+            throw new IllegalStateException("ZooKeeper is not started");
         } else if (this.brokerList.isEmpty()) {
             throw new IllegalStateException("No brokers added");
         }
@@ -307,9 +307,9 @@ public class KafkaCluster {
     }
 
     private void initializeDefaultProperties() throws IOException {
-        defaultZookeeperProperties = new Properties();
+        defaultZooKeeperProperties = new Properties();
         defaultKafkaProperties = new Properties();
-        defaultZookeeperProperties.load(Class.class.getResourceAsStream(ZOOKEEPER_PROP));
+        defaultZooKeeperProperties.load(Class.class.getResourceAsStream(ZOOKEEPER_PROP));
         defaultKafkaProperties.load(Class.class.getResourceAsStream(KAFKA_PROP));
     }
 }

@@ -24,7 +24,7 @@ public class TestClusterBuilder {
     public void testDeleteLogsOnExit() throws IOException {
         String dataDir = "/tmp/kafka-cluster-test";
         KafkaCluster kafkaCluster = new KafkaCluster(dataDir, null)
-                .withZookeeper(2181, null)
+                .withZooKeeper(2181, null)
                 .withBroker("PLAINTEXT", 9092, null)
                 .start();
 
