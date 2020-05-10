@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Author: Thisaru Guruge
+  ~ Website: https://ThisaruGuruge.github.io
+  ~
+  ~ This software is under Apache 2.0 License.
+  ~
+  ~ Copyright (c) 2020 | All Rights Reserved
+  -->
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="local-kafka-cluster-test-suite">
+    <test name="local-kafka-cluster-build-tests">
+        <classes>
+            <class name="org.thisaru.kafka.test.TestClusterBuilder"></class>
+        </classes>
+    </test>
+</suite>
