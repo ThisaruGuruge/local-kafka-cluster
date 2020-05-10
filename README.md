@@ -1,5 +1,4 @@
-![Java CI with Maven](https://github.com/ThisaruGuruge/local-kafka-cluster-for-testing/workflows/Java%20CI%20with%20Maven/badge.svg)
-
+![Java CI with Maven](https://github.com/ThisaruGuruge/local-kafka-cluster/workflows/Java%20CI%20with%20Maven/badge.svg)
 # Local Kafka Cluster
 This is a local kafka cluster setup used for testing purposes.
 The Kafka cluster have
