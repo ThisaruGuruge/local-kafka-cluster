@@ -266,7 +266,7 @@ public class KafkaCluster {
      */
     public String consumeMessage(long timeout) {
         if (this.kafkaConsumer == null) {
-            throw new IllegalStateException("Kafka cluster does not have a consumer");
+            throw new IllegalStateException("Kafka Consumer is not initialized");
         }
         Duration duration = Duration.ofMillis(timeout);
         ConsumerRecords<?, ?> records = this.kafkaConsumer.poll(duration);
@@ -288,6 +288,9 @@ public class KafkaCluster {
      * @throws InterruptedException - If a concurrency exception occurred while sending the message
      */
     public void sendMessage(String topic, Object key, Object value) throws ExecutionException, InterruptedException {
+        if (this.kafkaProducer == null) {
+            throw new IllegalStateException("Kafka Producer is not initialized");
+        }
         ProducerRecord producerRecord = new ProducerRecord<>(topic, key, value);
         // Since this is for tests, block until producer sends the message.
         this.kafkaProducer.send(producerRecord).get();
@@ -303,6 +306,9 @@ public class KafkaCluster {
      * @throws InterruptedException - If a concurrency exception occurred while sending the message
      */
     public void sendMessage(String topic, Object value) throws ExecutionException, InterruptedException {
+        if (this.kafkaProducer == null) {
+            throw new IllegalStateException("Kafka Producer is not initialized");
+        }
         ProducerRecord producerRecord = new ProducerRecord<>(topic, value);
         // Since this is for tests, block until producer sends the message
         this.kafkaProducer.send(producerRecord).get();
