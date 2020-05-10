@@ -9,7 +9,7 @@ The Kafka cluster have
 
 > This is only intended to be used for testing, and does not recommend to use in production.
 
-# Examples
+## Examples
 
 To create a simple Kafka cluster, you can use the following method. The Kafka cluster constructor takes two paramters. 
 - `dataDir` - The root directory to keep ZooKeeper and the Kafka logs.
