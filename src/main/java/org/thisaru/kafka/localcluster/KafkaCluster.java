@@ -31,7 +31,9 @@ import org.thisaru.kafka.localcluster.servers.LocalKafkaServer;
 import org.thisaru.kafka.localcluster.servers.LocalZooKeeperServer;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -48,11 +50,8 @@ import static org.thisaru.kafka.localcluster.utils.Constants.ZOOKEEPER_PROP;
 import static org.thisaru.kafka.localcluster.utils.Constants.ZOOKEEPER_SUFFIX;
 
 /**
- * Builds a Kafka cluster with
- * - A ZooKeeper (Required)
- * - KafkaServer(s) (At least one required)
- * - KafkaConsumer (Optional)
- * - KafkaProducer (Optional)
+ * Builds a Kafka cluster with a ZooKeeper, a KafkaServer(s) (At least one required), KafkaConsumer
+ * (Optional), KafkaProducer (Optional).
  */
 public class KafkaCluster {
 
@@ -83,9 +82,21 @@ public class KafkaCluster {
     /**
      * Initiates the building of the Kafka cluster.
      *
-     * @param dataDir - The root directory to keep ZooKeeper and Kafka logs.
-     * @param host    - Host of the Kafka Cluster. Default value is {@code localhost}.
-     * @throws IOException - If the default properties files are missing.
+     * @param dataDir - The root directory to keep ZooKeeper and Kafka logs
+     * @throws IOException - If the default properties files are missing
+     */
+    public KafkaCluster(String dataDir) throws IOException {
+        this.dataDir = dataDir;
+        initializeDefaultProperties();
+        this.brokerList = new ArrayList<>();
+    }
+
+    /**
+     * Initiates the building of the Kafka cluster.
+     *
+     * @param dataDir - The root directory to keep ZooKeeper and Kafka logs
+     * @param host    - Host of the Kafka Cluster. Default value is {@code localhost}
+     * @throws IOException - If the default properties files are missing
      */
     public KafkaCluster(String dataDir, String host) throws IOException {
         this.dataDir = dataDir;
@@ -94,6 +105,33 @@ public class KafkaCluster {
         }
         initializeDefaultProperties();
         this.brokerList = new ArrayList<>();
+    }
+
+    /**
+     * Initiates the building of the Kafka cluster.
+     *
+     * @param dataDir           - The root directory to keep ZooKeeper and Kafka logs
+     * @param host              - Host of the Kafka Cluster. Default value is {@code localhost}
+     * @param resourceDirectory - Path to the resources directory where default ZooKeeper and Kafka properties at
+     * @throws IOException - If the default properties files are missing
+     */
+    public KafkaCluster(String dataDir, String host, String resourceDirectory) throws IOException {
+        this.dataDir = dataDir;
+        if (host != null) {
+            this.host = host;
+        }
+        initializeDefaultProperties(resourceDirectory);
+        this.brokerList = new ArrayList<>();
+    }
+
+    /**
+     * Add a ZooKeeper server to the cluster.
+     *
+     * @param port             - Client port ({@code clientPort}) of the ZooKeeper
+     * @return - {@code KafkaCluster} with the ZooKeeper
+     */
+    public KafkaCluster withZooKeeper(int port) {
+        return withZooKeeper(port, null);
     }
 
     /**
@@ -119,6 +157,17 @@ public class KafkaCluster {
 
         this.zookeeper = new LocalZooKeeperServer(properties);
         return this;
+    }
+
+    /**
+     * Adds a Kafka broker the to the cluster.
+     *
+     * @param protocol         - The security protocol used in the Broker
+     * @param port             - The port number of the broker
+     * @return - {@code KafkaCluster} with the Kafka broker
+     */
+    public KafkaCluster withBroker(String protocol, int port) {
+        return withBroker(protocol, port, null);
     }
 
     /**
@@ -278,13 +327,13 @@ public class KafkaCluster {
     }
 
     /**
-     * Sends a message to the {@code KafkaCluster}. This blocks the sending function and waits for it to return,
-     * since this is used in tests. Not recommended in production.
+     * Sends a message to the {@code KafkaCluster}. This blocks the sending function and waits for it to return, since
+     * this is used in tests. Not recommended in production.
      *
      * @param topic - Topic to send the message
      * @param key   - Key of the Kafka message
      * @param value - Value of the Kafka message
-     * @throws ExecutionException - If an exception occurred while sending the message
+     * @throws ExecutionException   - If an exception occurred while sending the message
      * @throws InterruptedException - If a concurrency exception occurred while sending the message
      */
     public void sendMessage(String topic, Object key, Object value) throws ExecutionException, InterruptedException {
@@ -297,12 +346,12 @@ public class KafkaCluster {
     }
 
     /**
-     * Sends a message to the {@code KafkaCluster}. This blocks the sending function and waits for it to return,
-     * since this is used in tests. Not recommended in production.
+     * Sends a message to the {@code KafkaCluster}. This blocks the sending function and waits for it to return, since
+     * this is used in tests. Not recommended in production.
      *
      * @param topic - Topic to send the message
      * @param value - Value of the Kafka message
-     * @throws ExecutionException - If an exception occurred while sending the message
+     * @throws ExecutionException   - If an exception occurred while sending the message
      * @throws InterruptedException - If a concurrency exception occurred while sending the message
      */
     public void sendMessage(String topic, Object value) throws ExecutionException, InterruptedException {
@@ -331,5 +380,16 @@ public class KafkaCluster {
         defaultKafkaProperties = new Properties();
         defaultZooKeeperProperties.load(Class.class.getResourceAsStream(ZOOKEEPER_PROP));
         defaultKafkaProperties.load(Class.class.getResourceAsStream(KAFKA_PROP));
+    }
+
+    private void initializeDefaultProperties(String resourceDirectory) throws IOException {
+        defaultZooKeeperProperties = new Properties();
+        defaultKafkaProperties = new Properties();
+        InputStream zookeeperPropertiesStream = new FileInputStream(
+                (Paths.get(resourceDirectory, "zookeeper.properties")).toString());
+        defaultZooKeeperProperties.load(zookeeperPropertiesStream);
+        InputStream kafkaPropertiesStream = new FileInputStream(
+                Paths.get(resourceDirectory, "server.properties").toString());
+        defaultKafkaProperties.load(kafkaPropertiesStream);
     }
 }

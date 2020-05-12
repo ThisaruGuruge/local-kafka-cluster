@@ -15,10 +15,16 @@
  */
 package org.thisaru.kafka.localcluster.servers;
 
+import kafka.metrics.KafkaMetricsReporter;
+import kafka.metrics.KafkaMetricsReporter$;
 import kafka.server.KafkaConfig;
-import kafka.server.KafkaServerStartable;
+import kafka.server.KafkaServer;
+import kafka.utils.VerifiableProperties;
+import org.apache.kafka.common.utils.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.Option;
+import scala.collection.Seq;
 
 import java.util.Properties;
 
@@ -26,9 +32,10 @@ import java.util.Properties;
  * Creates a local Kafka server used for testing purposes.
  */
 public class LocalKafkaServer {
+    private static final String prefix = "kafka-thread";
     Logger logger = LoggerFactory.getLogger(LocalKafkaServer.class);
 
-    private KafkaServerStartable kafkaServer;
+    private final KafkaServer kafkaServer;
 
     /**
      * Creates a Kafka Server instance.
@@ -37,34 +44,26 @@ public class LocalKafkaServer {
      */
     public LocalKafkaServer(Properties properties) {
         KafkaConfig kafkaConfig = KafkaConfig.fromProps(properties);
-        kafkaServer = new KafkaServerStartable(kafkaConfig);
+        Seq<KafkaMetricsReporter> reporters = KafkaMetricsReporter$.MODULE$.startReporters(
+                new VerifiableProperties(properties));
+        this.kafkaServer = new KafkaServer(kafkaConfig, Time.SYSTEM, Option.apply(prefix), reporters);
     }
 
     /**
      * Starts the Kafka server.
      */
-    public void start() throws RuntimeException {
+    public void start() {
         logger.info("Starting Kafka server");
-        try {
-            this.kafkaServer.startup();
-            logger.info("Kafka server successfully started.");
-        } catch (Throwable throwable) {
-            logger.error("Failed to start the Kafka server.", throwable);
-            throw new RuntimeException(throwable);
-        }
+        this.kafkaServer.startup();
+        logger.info("Kafka server successfully started.");
     }
 
     /**
      * Stops the Kafka Server.
      */
-    public void stop() throws RuntimeException {
+    public void stop() {
         logger.info("Stopping Kafka server");
-        try {
-            this.kafkaServer.shutdown();
-            logger.info("Kafka server successfully stopped.");
-        } catch (Throwable throwable) {
-            logger.error("Failed to stop the Kafka server.", throwable);
-            throw new RuntimeException(throwable);
-        }
+        this.kafkaServer.shutdown();
+        logger.info("Kafka server successfully stopped.");
     }
 }
