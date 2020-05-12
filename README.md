@@ -11,6 +11,7 @@ The Kafka cluster have
 
 ## Examples
 
+### Basic cluster
 To create a simple Kafka cluster, you can use the following method. The Kafka cluster constructor takes two paramters. 
 - `dataDir` - The root directory to keep ZooKeeper and the Kafka logs.
 - `host` - Host for the ZooKeeper and the Kafka servers. Default value is `localhost`.
@@ -33,9 +34,48 @@ Then the `withZooKeeper()` method will create and start a ZooKeeper. The created
 public class TestKafkaCluster {
     public void createKafkaCluster() throws IOException {
         String dataDir = "/tmp/kafka-cluster-test";
-        KafkaCluster kafkaCluster = new KafkaCluster(dataDir, null)
-                                    .withZookeeper(2181, null)
-                                    .withBroker("PLAINTEXT", 9092, null)
+        KafkaCluster kafkaCluster = new KafkaCluster(dataDir)
+                                    .withZookeeper(2181)
+                                    .withBroker("PLAINTEXT", 9092)
+                                    .start();
+    }
+}
+```
+
+### Provide additional properties
+```java
+public class TestKafkaCluster {
+    public void createKafkaCluster() throws IOException {
+        String dataDir = "/tmp/kafka-cluster-test";
+        String hostName = "127.0.0.1";
+        Properties zookeeperProperties = new Properties();
+        // Add additional zookeeper properties
+        Properties kafkaProperties = new Properties();
+        // Add additional kafka properties
+        KafkaCluster kafkaCluster = new KafkaCluster(dataDir, hostName)
+                                    .withZookeeper(2181, zookeeperProperties)
+                                    .withBroker("PLAINTEXT", 9092, kafkaProperties)
+                                    .start();
+    }
+}
+```
+
+### Adding clients
+
+Adding Producer and Consumer.
+```java
+public class TestKafkaCluster {
+    public void createKafkaCluster() throws IOException {
+        String dataDir = "/tmp/kafka-cluster-test";
+        String serializer = StringSerializer.class.getName();
+        String deserializer = StringDeserializer.class.getName();
+        String topic = "test-topic";
+        List<String> topics = Collections.singletonList(topic);
+        KafkaCluster kafkaCluster = new KafkaCluster(dataDir)
+                                    .withZookeeper(2181)
+                                    .withBroker("PLAINTEXT", 9092)
+                                    .withConsumer(deserializer, deserializer, "consumer-group", topics)
+                                    .withProducer(serializer, serializer)
                                     .start();
     }
 }
